@@ -21,8 +21,8 @@ new Cube(20,20,20).range(0,20,0,20,0,5).value(1)
 
 ```java
 new Cube(30,30,30).ones()
-                .circle(0,30,15,15,10, Cube.Axis.Z, Cube.Position.Inside)
-                .circle(0,30,15,15,10, Cube.Axis.Y, Cube.Position.Inside)
+                .circle(0,30,15,15,10, Cube.Axis.Z, Cube.Position.Outside)
+                .circle(0,30,15,15,10, Cube.Axis.Y, Cube.Position.Outside)
                 .cube();
 ```
 <img src="https://github.com/vua/JavaFx3D/blob/master/image/2.png" width="400"/>
@@ -42,6 +42,14 @@ new Cube(30,30,30)
 ```
 <img src="https://github.com/vua/JavaFx3D/blob/master/image/7.png" width="400"/>
 
+```java
+new Cube(30,30,30)
+            .zeros()
+            .elbowPipe(20,15,28,28,8, Cube.Axis.Z,Cube.Axis.X)
+            .cube();
+
+```
+<img src="https://github.com/vua/JavaFx3D/blob/master/image/9.png" width="400"/>
 2. Three3DUtils
 
 createMeshView方法将int[][][]转换为MeshView
