@@ -10,11 +10,13 @@ package com.cooooode.threeD;
 public class Cube {
 
     enum Axis {
-        X, Y, Z;
+        X, Y, Z
     }
 
     enum Position {
-        Inside, Outside;
+        //Inside:内为1
+        //Outside:内为0
+        Inside, Outside
     }
 
     /**
@@ -47,7 +49,7 @@ public class Cube {
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 for (int k = 0; k < height; k++) {
-                    cube[i][j][k]=1;
+                    cube[i][j][k] = 1;
                 }
             }
         }
@@ -58,7 +60,7 @@ public class Cube {
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 for (int k = 0; k < height; k++) {
-                    cube[i][j][k]=0;
+                    cube[i][j][k] = 0;
                 }
             }
         }
@@ -121,76 +123,99 @@ public class Cube {
          */
         switch (axis) {
             case X: {
-                if (position == Position.Inside)
-                    for (int i = start; i < end; i++) {
-                        for (int j = 0; j < width; j++) {
-                            for (int k = 0; k < height; k++) {
-                                if (Math.sqrt(Math.pow(j - x, 2) + Math.pow(k - y, 2)) < radius) {
-                                    cube[i][j][k] = 0;
-                                }
+
+                for (int i = start; i < end; i++) {
+                    for (int j = 0; j < width; j++) {
+                        for (int k = 0; k < height; k++) {
+                            if (Math.sqrt(Math.pow(j - x, 2) + Math.pow(k - y, 2)) <= radius) {
+                                cube[i][j][k] = (position == Position.Inside) ? 1 : 0;
                             }
                         }
                     }
-                else
-                    for (int i = start; i < length; i++) {
-                        for (int j = 0; j < end; j++) {
-                            for (int k = 0; k < height; k++) {
-                                if (Math.sqrt(Math.pow(j - x, 2) + Math.pow(k - y, 2)) > radius) {
-                                    cube[i][j][k] = 0;
-                                }
-                            }
-                        }
-                    }
+                }
             }
             break;
             case Y: {
-                if (position == Position.Inside)
-                    for (int j = start; j < end; j++) {
-                        for (int i = 0; i < length; i++) {
-                            for (int k = 0; k < height; k++) {
-                                if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(k - y, 2)) < radius) {
-                                    cube[i][j][k] = 0;
-                                }
+                for (int j = start; j < end; j++) {
+                    for (int i = 0; i < length; i++) {
+                        for (int k = 0; k < height; k++) {
+                            if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(k - y, 2)) < radius) {
+                                cube[i][j][k] = (position == Position.Inside) ? 1 : 0;
                             }
                         }
                     }
-                else
-                    for (int j = start; j < end; j++) {
-                        for (int i = 0; i < length; i++) {
-                            for (int k = 0; k < height; k++) {
-                                if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(k - y, 2)) > radius) {
-                                    cube[i][j][k] = 0;
-                                }
-                            }
-                        }
-                    }
+                }
             }
             break;
             case Z: {
-                if (position == Position.Inside)
-                    for (int k = start; k < end; k++) {
-                        for (int i = 0; i < length; i++) {
-                            for (int j = 0; j < width; j++) {
-                                if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) < radius) {
-                                    cube[i][j][k] = 0;
-                                }
+                for (int k = start; k < end; k++) {
+                    for (int i = 0; i < length; i++) {
+                        for (int j = 0; j < width; j++) {
+                            if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) < radius) {
+                                cube[i][j][k] = (position == Position.Inside) ? 1 : 0;
                             }
                         }
                     }
-                else
-                    for (int k = start; k < end; k++) {
-                        for (int i = 0; i < length; i++) {
-                            for (int j = 0; j < width; j++) {
-                                if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) > radius) {
-                                    cube[i][j][k] = 0;
-                                }
-                            }
-                        }
-                    }
+                }
             }
             break;
         }
         return this;
     }
 
+    public Cube elbowPipe(int x, int y, int length1, int length2, int radius, Axis axis1, Axis axis2) {
+
+        //没有校对好,坐标需要自己调整
+        elbowPipe(x, y, length1, radius, axis1, Position.Inside);
+        elbowPipe(y, length1 - radius, length2, radius, axis2, Position.Inside);
+        elbowPipe(x, y, length1 - 4, radius - 4, axis1, Position.Outside);
+        elbowPipe(y, length1 - radius, length2 - 4, radius - 4, axis2, Position.Outside);
+        return this;
+    }
+
+    public Cube elbowPipe(int x, int y, int length, int radius, Axis axis, Position position) {
+        switch (axis) {
+            case Z:
+                for (int k = 1; k <= length; k++) {
+                    double r = k < length - radius ? radius : Math.sqrt(Math.pow(radius, 2) - Math.pow((k + radius - length), 2));
+
+                    for (int i = x - radius; i <= x + radius; i++) {
+                        for (int j = y - radius; j <= y + radius; j++) {
+                            if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) <= r) {
+
+                                cube[i][j][k] = (position == Position.Inside) ? 1 : 0;
+                            }
+                        }
+                    }
+                }
+                break;
+            case X:
+                for (int k = 1; k <= length; k++) {
+                    double r = k < length - radius ? radius : Math.sqrt(Math.pow(radius, 2) - Math.pow((k + radius - length), 2));
+
+                    for (int i = x - radius; i <= x + radius; i++) {
+                        for (int j = y - radius; j <= y + radius; j++) {
+                            if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) <= r) {
+                                cube[k][i][j] = (position == Position.Inside) ? 1 : 0;
+                            }
+                        }
+                    }
+                }
+                break;
+            case Y:
+                for (int k = 1; k <= length; k++) {
+                    double r = k < length - radius ? radius : Math.sqrt(Math.pow(radius, 2) - Math.pow((k + radius - length), 2));
+
+                    for (int i = x - radius; i <= x + radius; i++) {
+                        for (int j = y - radius; j <= y + radius; j++) {
+                            if (Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) <= r) {
+                                cube[i][k][j] = (position == Position.Inside) ? 1 : 0;
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        return this;
+    }
 }
